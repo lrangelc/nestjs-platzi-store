@@ -50,15 +50,19 @@ export class ProductsController {
   @Patch(':id')
   update(@Param('id') id: number, @Body() payload: IProduct) {
     const result = this.productsService.update(id, payload);
-    return {
-      message: result.message,
-      payload,
-      body: {
-        limit: 10,
-        offset: 20,
-        product: result.newData,
-      },
-    };
+    if (result) {
+      return {
+        message: result.message,
+        payload,
+        body: {
+          limit: 10,
+          offset: 20,
+          product: result.newData,
+        },
+      };
+    } else {
+      return null;
+    }
   }
 
   @Delete(':id')
