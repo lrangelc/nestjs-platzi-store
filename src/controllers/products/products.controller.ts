@@ -6,7 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
+  // ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -15,12 +15,15 @@ import {
 import { IProduct } from 'src/interfaces/product.interface';
 
 import { ProductsService } from './../../services/products/products.service';
+import { ParseIntPipe } from './../../common/parse-int.pipe';
+import { CreateProductDto, UpdateProductDto } from './../../dtos/products.dto';
+
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) { }
+  constructor(private productsService: ProductsService) {}
 
   @Post()
-  create(@Body() payload: IProduct) {
+  create(@Body() payload: CreateProductDto) {
     const newProduct = this.productsService.create(payload);
     return {
       message: `Listado de productos`,
@@ -48,7 +51,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() payload: IProduct) {
+  update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
     const result = this.productsService.update(id, payload);
     if (result) {
       return {
@@ -66,7 +69,14 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
+  delete(
+    @Param(
+      'id',
+      // new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+      ParseIntPipe,
+    )
+    id: number,
+  ) {
     const result = this.productsService.delete(id);
     return {
       message: result.message,
@@ -83,7 +93,8 @@ export class ProductsController {
   getProducts(
     @Query(
       'limit',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+      // new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+      ParseIntPipe,
     )
     limit = 100,
     @Query('offset')
@@ -98,7 +109,8 @@ export class ProductsController {
   getProduct(
     @Param(
       'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+      // new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+      ParseIntPipe,
     )
     id: number,
   ) {
