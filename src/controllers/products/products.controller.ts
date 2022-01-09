@@ -1,15 +1,20 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 
 interface IProduct {
+  id: number;
   name: string;
   price: number;
 }
@@ -29,12 +34,54 @@ export class ProductsController {
     };
   }
 
-  @Get('products/filter')
+  @Put(':id')
+  updatePut(@Param('id') id: number, @Body() payload: IProduct) {
+    payload.id = id;
+    return {
+      message: `Listado de productos`,
+      payload,
+      body: {
+        limit: 10,
+        offset: 20,
+        brand: '',
+      },
+    };
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() payload: IProduct) {
+    payload.id = id;
+    return {
+      message: `Listado de productos`,
+      payload,
+      body: {
+        limit: 10,
+        offset: 20,
+        brand: '',
+      },
+    };
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: number) {
+    return {
+      message: `Producto eliminado`,
+      id,
+      body: {
+        limit: 10,
+        offset: 20,
+        brand: '',
+      },
+    };
+  }
+
+  @Get('filter')
   getProductFilter() {
     return `yo soy filter`;
   }
 
-  @Get('products/:id')
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
   getProduct(
     @Param(
       'id',
@@ -45,7 +92,7 @@ export class ProductsController {
     return `product ${id}`;
   }
 
-  @Get('products')
+  @Get()
   getProducts(
     @Query(
       'limit',
@@ -58,6 +105,4 @@ export class ProductsController {
   ) {
     return `Product: Brand->${brand} Limit->${limit}. Offset ->${offset}`;
   }
-
-
 }
