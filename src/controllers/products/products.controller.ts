@@ -12,12 +12,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-
-interface IProduct {
-  id: number;
-  name: string;
-  price: number;
-}
+import { IProduct } from 'src/interfaces/product.interface';
 
 @Controller('products')
 export class ProductsController {
