@@ -14,77 +14,65 @@ import {
 } from '@nestjs/common';
 import { IProduct } from 'src/interfaces/product.interface';
 
+import { ProductsService } from './../../services/products/products.service';
 @Controller('products')
 export class ProductsController {
+  constructor(private productsService: ProductsService) { }
+
   @Post()
   create(@Body() payload: IProduct) {
+    const newProduct = this.productsService.create(payload);
     return {
       message: `Listado de productos`,
       payload,
       body: {
         limit: 10,
         offset: 20,
-        brand: '',
+        newProduct,
       },
     };
   }
 
   @Put(':id')
   updatePut(@Param('id') id: number, @Body() payload: IProduct) {
-    payload.id = id;
+    const result = this.productsService.update(id, payload);
     return {
-      message: `Listado de productos`,
+      message: result.message,
       payload,
       body: {
         limit: 10,
         offset: 20,
-        brand: '',
+        product: result.newData,
       },
     };
   }
 
   @Patch(':id')
   update(@Param('id') id: number, @Body() payload: IProduct) {
-    payload.id = id;
+    const result = this.productsService.update(id, payload);
     return {
-      message: `Listado de productos`,
+      message: result.message,
       payload,
       body: {
         limit: 10,
         offset: 20,
-        brand: '',
+        product: result.newData,
       },
     };
   }
 
   @Delete(':id')
   delete(@Param('id') id: number) {
+    const result = this.productsService.delete(id);
     return {
-      message: `Producto eliminado`,
+      message: result.message,
       id,
-      body: {
-        limit: 10,
-        offset: 20,
-        brand: '',
-      },
     };
   }
 
   @Get('filter')
   getProductFilter() {
     return `yo soy filter`;
-  }
-
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  getProduct(
-    @Param(
-      'id',
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: number,
-  ) {
-    return `product ${id}`;
   }
 
   @Get()
@@ -98,6 +86,18 @@ export class ProductsController {
     offset = 5,
     @Query('brand') brand: string,
   ) {
-    return `Product: Brand->${brand} Limit->${limit}. Offset ->${offset}`;
+    return this.productsService.findAll();
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  getProduct(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    return this.productsService.findOne(id);
   }
 }

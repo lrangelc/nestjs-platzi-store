@@ -4,13 +4,7 @@ import { IProduct } from 'src/interfaces/product.interface';
 @Injectable()
 export class ProductsService {
   private lastId = 0;
-  private products: IProduct[] = [
-    {
-      id: 1,
-      name: 'product 1',
-      price: 5,
-    },
-  ];
+  private products: IProduct[] = [];
 
   findAll(): IProduct[] {
     return this.products;
